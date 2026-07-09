@@ -381,23 +381,6 @@ body {
 }
 /* dim words well past the current line for focus */
 
-/* ---- footer ---- */
-.hint {
-  font-size: 0.82rem;
-  color: var(--ink-faint);
-  line-height: 1.6;
-}
-.hint code {
-  font-family: ui-monospace, "SF Mono", Menlo, monospace;
-  background: var(--surface-2);
-  padding: 1px 6px;
-  border-radius: 5px;
-  color: var(--ink-soft);
-}
-.hint b {
-  color: var(--ink-soft);
-}
-
 button:focus-visible,
 input:focus-visible,
 .tok:focus-visible {

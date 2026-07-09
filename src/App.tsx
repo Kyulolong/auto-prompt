@@ -105,15 +105,6 @@ export default function App() {
           <Editor value={text} onChange={setText} disabled={running} />
         )}
       </main>
-
-      {!running && (
-        <footer className="hint">
-          <p>
-            <b>Web Speech</b>는 데스크톱 Chrome에서 바로 되지만 인터넷이 필요해요. <b>Vosk</b>는 완전 오프라인이며 먼저{" "}
-            <code>npm run get-model</code>로 한국어 모델을 받아야 합니다. 어느 쪽도 비용은 없어요.
-          </p>
-        </footer>
-      )}
     </div>
   );
 }
