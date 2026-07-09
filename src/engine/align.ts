@@ -26,6 +26,8 @@ export interface AlignConfig {
   maxQueryJamo: number; // cap on how much recent speech we match on
   minQueryJamo: number; // below this we don't have enough to localize
   maxReseekCandidates: number;
+  backwardPenalty: number; // per-jamo cost for matches behind the cursor (anti-backward-jitter)
+  forwardPenalty: number; // gentle per-jamo cost for matches far ahead (anti-teleport)
 }
 
 export const DEFAULT_CONFIG: AlignConfig = {
@@ -37,6 +39,8 @@ export const DEFAULT_CONFIG: AlignConfig = {
   maxQueryJamo: 60,
   minQueryJamo: 4,
   maxReseekCandidates: 48,
+  backwardPenalty: 0.3,
+  forwardPenalty: 0.05,
 };
 
 export interface AlignResult {
@@ -52,7 +56,13 @@ export interface AlignResult {
  * the edit distance there. Text chars before the match are free (start
  * anywhere); extra/again text chars cost 1 (insertions), as do misheard jamo.
  */
-function fuzzyMatchEnd(query: string, text: string): { consumed: number; dist: number } {
+function fuzzyMatchEnd(
+  query: string,
+  text: string,
+  cursorInWindow: number,
+  backwardPenalty: number,
+  forwardPenalty: number,
+): { consumed: number; dist: number } {
   const m = query.length;
   const n = text.length;
   if (m === 0 || n === 0) return { consumed: 0, dist: m };
@@ -71,13 +81,22 @@ function fuzzyMatchEnd(query: string, text: string): { consumed: number; dist: n
     prev = cur;
     cur = t;
   }
-  // prev now holds dp[m][*]; find best end (ties favor more progress = larger j)
+  // prev now holds dp[m][*]. Pick the best end, but SOFTLY penalize ends that
+  // fall behind the current cursor — this keeps interim/ambiguous input from
+  // yanking the reading position backward. Ties favor more progress (larger j).
   let bestJ = 0;
-  let bestDist = prev[0];
+  let bestScore = Infinity;
+  let bestDist = 0;
+  const biased = cursorInWindow >= 0;
   for (let j = 1; j <= n; j++) {
-    if (prev[j] < bestDist || (prev[j] === bestDist && j > bestJ)) {
-      bestDist = prev[j];
+    const behind = cursorInWindow - j; // >0 behind cursor, <0 ahead
+    let penalty = 0;
+    if (biased) penalty = behind > 0 ? behind * backwardPenalty : -behind * forwardPenalty;
+    const score = prev[j] + penalty;
+    if (score < bestScore || (score === bestScore && j > bestJ)) {
+      bestScore = score;
       bestJ = j;
+      bestDist = prev[j];
     }
   }
   return { consumed: bestJ, dist: bestDist };
@@ -139,13 +158,23 @@ export class Aligner {
     const start = Math.max(0, this.cursorJamo - this.cfg.back);
     const end = Math.min(jamo.length, this.cursorJamo + query.length * 2 + this.cfg.forwardBase);
     const window = jamo.slice(start, end);
+    const cursorInWindow = this.cursorJamo - start;
 
-    const { consumed, dist } = fuzzyMatchEnd(query, window);
+    const { consumed, dist } = fuzzyMatchEnd(query, window, cursorInWindow, this.cfg.backwardPenalty, this.cfg.forwardPenalty);
     const norm = dist / query.length;
+    // Short fragments match spuriously all over the script, so demand a cleaner
+    // match before letting them move the cursor (kills stray-word jitter).
+    const accept = query.length < 12 ? this.cfg.accept * 0.7 : this.cfg.accept;
 
-    if (consumed > 0 && norm <= this.cfg.accept) {
+    if (consumed > 0 && norm <= accept) {
       const absEnd = start + consumed; // exclusive
       const token = jamoToToken[Math.min(absEnd - 1, jamoToToken.length - 1)];
+      // Never snap backward on a merely-okay match (interim churn, repeated
+      // phrases). Only a STRONG match may move the cursor back — a real re-read.
+      if (token < this.confirmedToken && norm > this.cfg.reseekAccept) {
+        this.lostCount = 0;
+        return { token: this.confirmedToken, moved: false, lost: false, confidence: 1 - norm };
+      }
       this.accept(token, absEnd, now);
       return { token, moved: true, lost: false, confidence: 1 - norm };
     }
@@ -211,7 +240,8 @@ export class Aligner {
       seen.add(bucket);
       const end = Math.min(jamo.length, anchor + query.length + 32);
       const window = jamo.slice(start, end);
-      const { consumed, dist } = fuzzyMatchEnd(query, window);
+      // global search: no cursor bias (cursorInWindow<0 disables locality)
+      const { consumed, dist } = fuzzyMatchEnd(query, window, -1, 0, 0);
       if (consumed === 0) continue;
       const norm = dist / query.length;
       if (norm <= this.cfg.reseekAccept && (!best || norm < best.norm)) {

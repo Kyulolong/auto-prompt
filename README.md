@@ -92,7 +92,7 @@ src/
 
 ## 튜닝 노브
 
-- 정렬 민감도: [src/engine/align.ts](src/engine/align.ts) `DEFAULT_CONFIG` — `accept`(수용 임계값), `back`/`forwardBase`(윈도우 크기), `lostThreshold`.
+- 정렬 민감도: [src/engine/align.ts](src/engine/align.ts) `DEFAULT_CONFIG` — `accept`(수용 임계값), `back`/`forwardBase`(윈도우 크기), `lostThreshold`, 그리고 위아래 튐 방지용 `backwardPenalty`(뒤로 튐 억제)·`forwardPenalty`(멀리 순간이동 억제).
 - 스크롤 느낌: [src/engine/scroll.ts](src/engine/scroll.ts) `DEFAULT_SCROLL` — `spring`(이징), `creepCapTokens`(예측 전진 한도), `readingLineFrac`(읽는 줄 위치).
 
 화면에서 글자 크기·읽는 줄 위치·거울 모드는 실시간으로 조절된다. 대본과 설정은 브라우저에 자동 저장된다.
