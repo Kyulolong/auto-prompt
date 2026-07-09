@@ -9,7 +9,11 @@
  */
 import { type SttEngine, type SttHooks, splitWords } from "./types";
 
-const MODEL_URL = "/models/vosk-model-small-ko.tar.gz";
+// NOTE: served with a non-".gz" name on purpose. A .gz file makes static
+// servers (incl. Vite) send `Content-Encoding: gzip`, so the browser silently
+// decompresses it and vosk-browser then fails to un-gzip. The bytes are still a
+// gzipped tar; vosk-browser detects that by content.
+const MODEL_URL = "/models/vosk-model-small-ko.bin";
 
 // Minimal shapes for the lazily-loaded library.
 interface KaldiRecognizer {
@@ -51,8 +55,9 @@ export class VoskEngine implements SttEngine {
 
     try {
       this.model = await createModel(MODEL_URL);
-    } catch {
-      this.hooks.onError("한국어 모델을 찾을 수 없어요. `npm run get-model` 로 먼저 받아주세요.");
+    } catch (e) {
+      const reason = e instanceof Error ? e.message : String(e);
+      this.hooks.onError(`한국어 모델을 불러오지 못했어요 (${reason}). \`npm run get-model\` 로 받았는지 확인해주세요.`);
       this.hooks.onStatus("error");
       return;
     }

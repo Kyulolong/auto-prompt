@@ -6,7 +6,10 @@ set -euo pipefail
 MODEL="vosk-model-small-ko-0.22"
 URL="https://alphacephei.com/vosk/models/${MODEL}.zip"
 OUT_DIR="public/models"
-OUT="${OUT_DIR}/vosk-model-small-ko.tar.gz"
+# Deliberately NOT a .gz name: a .gz file gets served with Content-Encoding:
+# gzip, which makes the browser pre-decompress it and breaks vosk-browser.
+# The bytes are still a gzipped tar (vosk-browser detects that by content).
+OUT="${OUT_DIR}/vosk-model-small-ko.bin"
 
 if [ -f "$OUT" ]; then
   echo "이미 있음: $OUT (다시 받으려면 삭제 후 실행)"
