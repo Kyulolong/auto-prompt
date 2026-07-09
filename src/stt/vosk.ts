@@ -45,10 +45,17 @@ export class VoskEngine implements SttEngine {
     let createModel: (url: string) => Promise<VoskModel>;
     try {
       // @ts-ignore optional dependency, resolved at runtime
-      const vosk = await import("vosk-browser");
-      createModel = vosk.createModel as (url: string) => Promise<VoskModel>;
-    } catch {
-      this.hooks.onError("Vosk 라이브러리를 불러오지 못했어요. `npm i` 후 다시 시도해주세요.");
+      const mod = (await import("vosk-browser")) as unknown as {
+        createModel?: (url: string) => Promise<VoskModel>;
+        default?: { createModel?: (url: string) => Promise<VoskModel> };
+      };
+      // UMD interop: named export in most setups, on .default in some.
+      const fn = mod.createModel ?? mod.default?.createModel;
+      if (typeof fn !== "function") throw new Error("createModel export not found");
+      createModel = fn;
+    } catch (e) {
+      const reason = e instanceof Error ? e.message : String(e);
+      this.hooks.onError(`Vosk 라이브러리를 불러오지 못했어요 (${reason}).`);
       this.hooks.onStatus("error");
       return;
     }

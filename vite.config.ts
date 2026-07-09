@@ -16,7 +16,10 @@ const crossOriginIsolation = {
 
 export default defineConfig({
   plugins: [react(), crossOriginIsolation],
-  // vosk-browser ships prebuilt wasm; don't let Vite try to pre-bundle it.
-  optimizeDeps: { exclude: ["vosk-browser"] },
+  // vosk-browser is a UMD module (its worker+wasm are inlined as a base64 blob,
+  // so there are no external assets to break). Pre-bundle it so its named
+  // exports (createModel) survive ESM interop in the browser — excluding it
+  // makes the browser get the bare UMD, where createModel is undefined.
+  optimizeDeps: { include: ["vosk-browser"] },
   worker: { format: "es" },
 });
