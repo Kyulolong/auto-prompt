@@ -1,0 +1,14 @@
+node_modules
+dist
+dist-ssr
+*.local
+.DS_Store
+
+# Vosk Korean model (~82MB) — fetched with `npm run get-model`, not committed
+public/models/*
+!public/models/.gitkeep
+
+# editor
+.vscode/*
+!.vscode/extensions.json
+.idea

@@ -1,0 +1,30 @@
+{
+  "name": "auto-prompt",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Voice-following Korean teleprompter — listens to your voice and auto-scrolls the script",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -b --noEmit",
+    "test:align": "esbuild scripts/test-align.ts --bundle --format=esm --platform=node --outfile=node_modules/.cache/test-align.mjs && node node_modules/.cache/test-align.mjs",
+    "get-model": "bash scripts/download-vosk-model.sh"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@types/dom-speech-recognition": "^0.0.4",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.6.3",
+    "vite": "^6.0.3"
+  },
+  "optionalDependencies": {
+    "vosk-browser": "^0.0.8"
+  }
+}
