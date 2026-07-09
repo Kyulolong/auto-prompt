@@ -1,0 +1,33 @@
+# Netlify deploy config.
+#
+# COOP/COEP headers are what make the offline Vosk engine work (they enable the
+# cross-origin isolation / SharedArrayBuffer its WASM worker needs). Harmless for
+# the Web Speech engine, which needs none of it.
+#
+# The 86MB Korean model is git-ignored, so `npm run get-model` runs in the build
+# to fetch it into public/models before Vite copies it into dist/. (It's a no-op
+# if the file already exists — e.g. a local `netlify deploy --dir=dist`.)
+
+[build]
+  command = "npm run get-model && npm run build"
+  publish = "dist"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Cross-Origin-Opener-Policy = "same-origin"
+    Cross-Origin-Embedder-Policy = "require-corp"
+
+# The model is a gzipped tar served under a non-.gz name on purpose; make sure
+# Netlify hands it over as opaque bytes.
+[[headers]]
+  for = "/models/*"
+  [headers.values]
+    Content-Type = "application/octet-stream"
+
+# Single-page app: unknown paths fall back to index.html. Real files (the model,
+# assets) still win, since Netlify only applies this when no file matches.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
