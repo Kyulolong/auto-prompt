@@ -156,7 +156,8 @@ body {
   accent-color: var(--accent);
 }
 
-.engines {
+.engines,
+.modes {
   padding-top: 2px;
   border-top: 1px dashed var(--line);
   font-size: 0.85rem;

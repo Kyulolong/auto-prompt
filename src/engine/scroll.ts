@@ -39,6 +39,10 @@ export class ScrollController {
   private state: State = { confirmedToken: 0, confirmedAt: 0, tokensPerSec: 2.5, speaking: false, lost: false };
   private raf = 0;
   private running = false;
+  private mode: "voice" | "auto" = "voice";
+  private autoPxPerSec = 45;
+  private paused = false;
+  private lastFrame = 0;
 
   constructor(el: HTMLElement, opts: Partial<ScrollOptions> = {}) {
     this.el = el;
@@ -47,6 +51,20 @@ export class ScrollController {
 
   setOptions(opts: Partial<ScrollOptions>): void {
     this.opts = { ...this.opts, ...opts };
+  }
+
+  setMode(mode: "voice" | "auto"): void {
+    this.mode = mode;
+    this.lastFrame = 0;
+  }
+
+  setAutoSpeed(pxPerSec: number): void {
+    this.autoPxPerSec = pxPerSec;
+  }
+
+  setPaused(paused: boolean): void {
+    this.paused = paused;
+    this.lastFrame = 0; // avoid a jump on resume
   }
 
   setOffsets(offsets: number[]): void {
@@ -95,6 +113,17 @@ export class ScrollController {
   }
 
   private tick(now: number): void {
+    // Auto mode: constant-speed upward scroll, no voice needed.
+    if (this.mode === "auto") {
+      const dt = this.lastFrame ? Math.min((now - this.lastFrame) / 1000, 0.1) : 0;
+      this.lastFrame = now;
+      if (!this.paused && this.autoPxPerSec > 0) {
+        const max = this.el.scrollHeight - this.el.clientHeight;
+        this.el.scrollTop = Math.min(max, this.el.scrollTop + this.autoPxPerSec * dt);
+      }
+      return;
+    }
+    this.lastFrame = now;
     if (this.offsets.length === 0) return;
     const { creepCapTokens, readingLineFrac, spring, deadbandPx } = this.opts;
     const s = this.state;

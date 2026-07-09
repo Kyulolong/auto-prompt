@@ -1,10 +1,12 @@
-import type { EngineKind } from "./useController";
+import type { EngineKind, PrompterMode } from "./useController";
 import type { SttStatus } from "../stt/types";
 
 export interface Settings {
+  mode: PrompterMode;
   engine: EngineKind;
   fontSize: number;
   readingLineFrac: number;
+  autoSpeed: number; // px/sec for auto-scroll mode
   mirror: boolean;
 }
 
@@ -12,10 +14,12 @@ interface Props {
   running: boolean;
   status: SttStatus;
   lost: boolean;
+  paused: boolean;
   settings: Settings;
   onSettings: (patch: Partial<Settings>) => void;
   onStart: () => void;
   onStop: () => void;
+  onTogglePause: () => void;
   webSpeechAvailable: boolean;
 }
 
@@ -32,8 +36,12 @@ const STATUS_LABEL: Record<SttStatus, string> = {
   error: "오류",
 };
 
-export function Controls({ running, status, lost, settings, onSettings, onStart, onStop, webSpeechAvailable }: Props) {
-  const { engine, fontSize, readingLineFrac, mirror } = settings;
+export function Controls({ running, status, lost, paused, settings, onSettings, onStart, onStop, onTogglePause, webSpeechAvailable }: Props) {
+  const { mode, engine, fontSize, readingLineFrac, autoSpeed, mirror } = settings;
+  const auto = mode === "auto";
+
+  const runningLabel = auto ? (paused ? "일시정지" : "자동 스크롤 중") : lost ? "위치 찾는 중… (읽던 문장으로 돌아와 주세요)" : STATUS_LABEL[status];
+
   return (
     <div className="controls">
       <div className="controls-row">
@@ -47,14 +55,34 @@ export function Controls({ running, status, lost, settings, onSettings, onStart,
           </button>
         )}
 
+        {running && auto && (
+          <button className="btn" onClick={onTogglePause}>
+            {paused ? "재생" : "일시정지"}
+          </button>
+        )}
+
         {running && (
-          <span className={`status ${status}${lost ? " lost" : ""}`}>
+          <span className={`status ${auto ? "listening" : status}${lost && !auto ? " lost" : ""}`}>
             <span className="status-dot" />
-            {lost ? "위치 찾는 중… (읽던 문장으로 돌아와 주세요)" : STATUS_LABEL[status]}
+            {runningLabel}
           </span>
         )}
 
         <div className="spacer" />
+
+        {auto && (
+          <label className="ctl">
+            <span className="ctl-label">속도</span>
+            <input
+              type="range"
+              min={15}
+              max={170}
+              step={5}
+              value={autoSpeed}
+              onChange={(e) => onSettings({ autoSpeed: Number(e.target.value) })}
+            />
+          </label>
+        )}
 
         <div className="ctl">
           <span className="ctl-label">글자</span>
@@ -86,6 +114,20 @@ export function Controls({ running, status, lost, settings, onSettings, onStart,
       </div>
 
       {!running && (
+        <div className="controls-row modes">
+          <span className="ctl-label">모드</span>
+          <label className={`chip-radio${!auto ? " on" : ""}`}>
+            <input type="radio" name="mode" checked={!auto} onChange={() => onSettings({ mode: "voice" })} />
+            🎙 음성 따라가기
+          </label>
+          <label className={`chip-radio${auto ? " on" : ""}`}>
+            <input type="radio" name="mode" checked={auto} onChange={() => onSettings({ mode: "auto" })} />
+            ⏱ 자동 스크롤
+          </label>
+        </div>
+      )}
+
+      {!running && !auto && (
         <>
           <div className="controls-row engines">
             <span className="ctl-label">음성인식</span>
@@ -107,13 +149,19 @@ export function Controls({ running, status, lost, settings, onSettings, onStart,
           <p className="engine-note">
             {IS_IOS && (
               <span className="warn">
-                ⚠︎ iPad·아이폰(Safari)에서는 두 엔진 모두 아직 지원되지 않아요. 데스크톱 <b>Chrome</b>에서 열어주세요.{" "}
+                ⚠︎ iPad·아이폰(Safari)에서는 음성 인식이 아직 안 돼요. <b>자동 스크롤</b> 모드를 쓰거나 데스크톱 <b>Chrome</b>에서 열어주세요.{" "}
               </span>
             )}
             <b>Vosk</b>는 첫 실행 때 한국어 모델(약 82MB)을 받은 뒤 <b>완전 오프라인·로컬</b>로 돌아갑니다(음성이 밖으로 안 나가요). 데스크톱 Chrome 권장.{" "}
-            <b>Web Speech</b>는 설치 없이 바로 되지만 인터넷이 필요하고 음성이 구글로 전송돼요. 촬영할 땐 노트북을 카메라 옆에 두고 쓰는 걸 추천해요.
+            <b>Web Speech</b>는 설치 없이 바로 되지만 인터넷이 필요하고 음성이 구글로 전송돼요.
           </p>
         </>
+      )}
+
+      {!running && auto && (
+        <p className="engine-note">
+          마이크 없이 <b>일정 속도로 자동 스크롤</b>합니다. 인터넷·모델 필요 없고 <b>iPad를 포함한 모든 기기</b>에서 돼요. 시작한 뒤에도 속도·일시정지를 조절할 수 있어요.
+        </p>
       )}
     </div>
   );

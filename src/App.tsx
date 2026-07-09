@@ -9,9 +9,11 @@ const LS_SCRIPT = "ap.script";
 const LS_SETTINGS = "ap.settings";
 
 const DEFAULT_SETTINGS: Settings = {
+  mode: "voice",
   engine: isWebSpeechAvailable() ? "webspeech" : "vosk",
   fontSize: 44,
   readingLineFrac: 0.38,
+  autoSpeed: 45,
   mirror: false,
 };
 
@@ -65,13 +67,19 @@ export default function App() {
     (patch: Partial<Settings>) => {
       setSettings((s) => ({ ...s, ...patch }));
       if (patch.readingLineFrac !== undefined) controller.setScrollOptions({ readingLineFrac: patch.readingLineFrac });
+      if (patch.autoSpeed !== undefined) controller.setAutoSpeed(patch.autoSpeed);
     },
     [controller],
   );
 
   const onStart = useCallback(() => {
-    controller.start(text, settings.engine, { readingLineFrac: settings.readingLineFrac });
-  }, [controller, text, settings.engine, settings.readingLineFrac]);
+    controller.start(text, {
+      mode: settings.mode,
+      engine: settings.engine,
+      readingLineFrac: settings.readingLineFrac,
+      autoSpeed: settings.autoSpeed,
+    });
+  }, [controller, text, settings.mode, settings.engine, settings.readingLineFrac, settings.autoSpeed]);
 
   return (
     <div className="app">
@@ -89,10 +97,12 @@ export default function App() {
         running={running}
         status={controller.state.status}
         lost={controller.state.lost}
+        paused={controller.state.paused}
         settings={settings}
         onSettings={patchSettings}
         onStart={onStart}
         onStop={controller.stop}
+        onTogglePause={controller.togglePause}
         webSpeechAvailable={isWebSpeechAvailable()}
       />
 
