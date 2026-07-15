@@ -11,6 +11,9 @@
   --acid: #8fff00;
   --acid-soft: #b8ff5c;
   --acid-wash: rgba(143, 255, 0, 0.16);
+  /* 형광 '위에' 올라가는 글자. 테마가 붙어도 절대 뒤집지 않는다 — #8FFF00은 늘 밝으므로
+   * 그 위 글자는 늘 어두워야 한다. (--ink를 쓰면 다크에서 1.1:1로 증발한다) */
+  --on-acid: #14140f;
 
   /* 따뜻한 캔버스 (dark) — 푸른 검정이 아니라 올리브 기운의 검정 */
   --bg: #14140f;
@@ -150,7 +153,7 @@ body {
 /* 이 화면의 형광 한 점. 글로우 없음 — 어두운 방에서 halo는 눈을 찌른다 */
 .btn.primary {
   background: var(--acid);
-  color: #14140f;
+  color: var(--on-acid);
   border-color: transparent;
   font-weight: 700;
 }
