@@ -73,22 +73,26 @@ body {
 }
 .brand {
   display: flex;
-  align-items: center;
-  gap: 12px;
-}
-/* 브랜드 마크. 작고 늘 같은 자리라 주목을 다투지 않는다 — 글로우만 없으면 된다 */
-.logo {
-  width: 34px;
-  height: 34px;
-  border-radius: 9px;
-  flex: none;
-  background: radial-gradient(circle at 30% 30%, var(--acid-soft), var(--acid) 55%, #6fc400);
+  flex-direction: column;
+  gap: 2px;
 }
 .brand h1 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   margin: 0;
-  font-size: 1.12rem;
+  font-size: 1.15rem;
   font-weight: 700;
   letter-spacing: -0.015em;
+}
+/* 브랜드 마크: 워드마크 앞에 찍는 초록 점 하나.
+ * 납작한 단색 정원 — 그라데이션·글로우·테두리 없음. 서비스마다 이 점 하나로 통일한다. */
+.logo {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  flex: none;
+  background: var(--acid);
 }
 .brand p {
   margin: 0;

@@ -85,11 +85,11 @@ export default function App() {
     <div className="app">
       <header className="topbar">
         <div className="brand">
-          <span className="logo" aria-hidden="true" />
-          <div>
-            <h1>보이스 프롬프터</h1>
-            <p>그냥 편하게 읽으세요. 화면은 제가 따라갈게요.</p>
-          </div>
+          <h1>
+            <span className="logo" aria-hidden="true" />
+            보이스 프롬프터
+          </h1>
+          <p>그냥 편하게 읽으세요. 화면은 제가 따라갈게요.</p>
         </div>
         <span className="credit">made by kyulolong</span>
       </header>
