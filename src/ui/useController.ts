@@ -122,7 +122,7 @@ export function useController() {
     async (scriptText: string, cfg: StartConfig) => {
       const prepared = prepareScript(scriptText);
       if (prepared.tokens.length === 0) {
-        setState((s) => ({ ...s, error: "대본이 비어 있어요." }));
+        setState((s) => ({ ...s, error: "대본이 아직 비어 있어요. 아무 문장이나 붙여넣고 시작해 보세요." }));
         return;
       }
       setTokens(prepared.tokens);

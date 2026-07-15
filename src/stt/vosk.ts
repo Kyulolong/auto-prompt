@@ -64,7 +64,7 @@ export class VoskEngine implements SttEngine {
       this.model = await createModel(MODEL_URL);
     } catch (e) {
       const reason = e instanceof Error ? e.message : String(e);
-      this.hooks.onError(`한국어 모델을 불러오지 못했어요 (${reason}). \`npm run get-model\` 로 받았는지 확인해주세요.`);
+      this.hooks.onError(`한국어 모델이 아직 준비가 안 됐어요 (${reason}). \`npm run get-model\` 한 번이면 끝이에요.`);
       this.hooks.onStatus("error");
       return;
     }
@@ -72,7 +72,7 @@ export class VoskEngine implements SttEngine {
     try {
       this.stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
     } catch {
-      this.hooks.onError("마이크 권한이 필요해요.");
+      this.hooks.onError("마이크를 쓸 수 있게 허용해 주세요. 주소창의 마이크 아이콘에서 켤 수 있어요.");
       this.hooks.onStatus("error");
       return;
     }

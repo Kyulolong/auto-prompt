@@ -88,7 +88,7 @@ export default function App() {
           <span className="logo" aria-hidden="true" />
           <div>
             <h1>보이스 프롬프터</h1>
-            <p>목소리를 듣고 대본을 따라 스크롤합니다</p>
+            <p>그냥 편하게 읽으세요. 화면은 제가 따라갈게요.</p>
           </div>
         </div>
       </header>

@@ -37,7 +37,7 @@ export function Editor({ value, onChange, disabled }: Props) {
         value={value}
         onChange={(e) => onChange(e.target.value)}
         disabled={disabled}
-        placeholder="여기에 대본을 붙여넣으세요. 최대 10분 분량까지 무리 없이 따라갑니다."
+        placeholder="여기에 대본을 붙여넣어 보세요. 10분 분량도 괜찮아요."
         spellCheck={false}
       />
     </div>

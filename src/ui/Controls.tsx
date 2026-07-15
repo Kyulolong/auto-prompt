@@ -31,16 +31,23 @@ const IS_IOS =
 const STATUS_LABEL: Record<SttStatus, string> = {
   idle: "대기",
   loading: "준비 중…",
-  listening: "듣는 중",
+  listening: "듣고 있어요",
   stopped: "정지",
-  error: "오류",
+  error: "잠깐 멈췄어요",
 };
 
 export function Controls({ running, status, lost, paused, settings, onSettings, onStart, onStop, onTogglePause, webSpeechAvailable }: Props) {
   const { mode, engine, fontSize, readingLineFrac, autoSpeed, mirror } = settings;
   const auto = mode === "auto";
 
-  const runningLabel = auto ? (paused ? "일시정지" : "자동 스크롤 중") : lost ? "위치 찾는 중… (읽던 문장으로 돌아와 주세요)" : STATUS_LABEL[status];
+  // 다그치지 않는다: "돌아와 주세요"(사용자 탓)가 아니라 "제가 따라갈게요"(서비스가 책임)
+  const runningLabel = auto
+    ? paused
+      ? "일시정지"
+      : "자동 스크롤 중"
+    : lost
+      ? "잠깐 놓쳤어요. 편하게 계속 읽으시면 다시 따라갈게요"
+      : STATUS_LABEL[status];
 
   return (
     <div className="controls">
@@ -153,7 +160,8 @@ export function Controls({ running, status, lost, paused, settings, onSettings, 
               </span>
             )}
             <b>Vosk</b>는 첫 실행 때 한국어 모델(약 82MB)을 받은 뒤 <b>완전 오프라인·로컬</b>로 돌아갑니다(음성이 밖으로 안 나가요). 데스크톱 Chrome 권장.{" "}
-            <b>Web Speech</b>는 설치 없이 바로 되지만 인터넷이 필요하고 음성이 구글로 전송돼요.
+            <b>Web Speech</b>는 설치 없이 바로 되지만 인터넷이 필요하고 음성이 구글로 전송돼요. 고르고 시작만 누르면 끝이에요.{" "}
+            <span className="easy">참 쉽죠?</span>
           </p>
         </>
       )}

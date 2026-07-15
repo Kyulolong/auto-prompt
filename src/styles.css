@@ -1,16 +1,41 @@
+/* 디자인 시스템: ~/.claude/DESIGN.md — "따뜻한 캔버스 위의 형광 초록 한 점"
+ *
+ * 이 앱은 촬영용이라 다크 한 가지에 의도적으로 커밋한다(밝은 프롬프터는 카메라
+ * 옆에서 눈이 부시다). 형광 초록이 찍히는 '한 점'은 딱 두 곳뿐:
+ *   - 지금 읽고 있는 그 단어
+ *   - 시작 버튼
+ * 나머지는 전부 따뜻한 중립색.
+ */
 :root {
-  --bg: #0e1116;
-  --surface: #161b22;
-  --surface-2: #1c232d;
-  --line: #29313c;
-  --ink: #e8ecf2;
-  --ink-soft: #aab3c0;
-  --ink-faint: #6f7885;
-  --accent: #f2b24c;
-  --accent-ink: #ffce7a;
-  --danger: #e4685c;
-  --good: #5fb87a;
-  --reading: 38%;
+  /* 형광 한 점 */
+  --acid: #8fff00;
+  --acid-soft: #b8ff5c;
+  --acid-wash: rgba(143, 255, 0, 0.16);
+
+  /* 따뜻한 캔버스 (dark) — 푸른 검정이 아니라 올리브 기운의 검정 */
+  --bg: #14140f;
+  --surface: #1c1b15;
+  --surface-2: #24231b;
+  --line: #333226;
+  --ink: #f0eee4;
+  --ink-soft: #aba795;
+  --ink-faint: #8a8574;
+  --stage: #0f0e0a; /* 프롬프터 바탕: 가장 깊은 따뜻한 검정 */
+
+  /* 의미색 */
+  --happy-accident: #e8834a; /* 에러 — 빨강이 아니라 따뜻한 테라코타 */
+  --caution: #e0a93b;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.4);
+
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 18px;
+
+  --font-sans: Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Segoe UI", "Noto Sans KR", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
+
   color-scheme: dark;
 }
 
@@ -26,7 +51,7 @@ body,
 body {
   background: var(--bg);
   color: var(--ink);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
 }
 
@@ -36,8 +61,8 @@ body {
   flex-direction: column;
   max-width: 1100px;
   margin: 0 auto;
-  padding: 14px clamp(12px, 3vw, 28px) 18px;
-  gap: 12px;
+  padding: 16px clamp(12px, 3vw, 28px) 20px;
+  gap: 14px;
 }
 
 /* ---- top bar ---- */
@@ -51,23 +76,24 @@ body {
   align-items: center;
   gap: 12px;
 }
+/* 붓끝의 한 점 */
 .logo {
   width: 34px;
   height: 34px;
-  border-radius: 9px;
-  background: radial-gradient(circle at 30% 30%, var(--accent-ink), var(--accent) 55%, #b9791f);
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.3), 0 6px 16px rgba(242, 178, 76, 0.25);
+  border-radius: 50%;
   flex: none;
+  background: var(--acid);
+  box-shadow: 0 0 22px rgba(143, 255, 0, 0.35);
 }
 .brand h1 {
   margin: 0;
   font-size: 1.12rem;
   font-weight: 700;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.015em;
 }
 .brand p {
   margin: 0;
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   color: var(--ink-faint);
 }
 
@@ -75,11 +101,11 @@ body {
 .controls {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 11px;
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 12px;
-  padding: 12px 14px;
+  border-radius: var(--r-lg);
+  padding: 14px 16px;
 }
 .controls-row {
   display: flex;
@@ -90,6 +116,7 @@ body {
 .spacer {
   flex: 1 1 auto;
 }
+
 .btn {
   font: inherit;
   font-weight: 650;
@@ -97,25 +124,34 @@ body {
   background: var(--surface-2);
   color: var(--ink);
   padding: 9px 20px;
-  border-radius: 9px;
+  border-radius: var(--r-sm);
   cursor: pointer;
+  transition: background 0.2s ease-out, border-color 0.2s ease-out;
 }
 .btn:hover {
   border-color: var(--ink-faint);
 }
+/* 이 화면의 형광 한 점 */
 .btn.primary {
-  background: var(--accent);
-  color: #241a05;
+  background: var(--acid);
+  color: #14140f;
   border-color: transparent;
+  font-weight: 700;
+  box-shadow: 0 0 24px rgba(143, 255, 0, 0.22);
 }
 .btn.primary:hover {
-  background: var(--accent-ink);
+  background: var(--acid-soft);
 }
+/* 위험 동작은 배경을 채우지 않는다 */
 .btn.danger {
   background: transparent;
-  color: var(--danger);
-  border-color: color-mix(in srgb, var(--danger) 45%, var(--line));
+  color: var(--happy-accident);
+  border-color: color-mix(in srgb, var(--happy-accident) 40%, var(--line));
 }
+.btn.danger:hover {
+  border-color: var(--happy-accident);
+}
+
 .ctl {
   display: flex;
   align-items: center;
@@ -135,15 +171,18 @@ body {
   font: inherit;
   width: 26px;
   height: 26px;
-  border-radius: 7px;
+  border-radius: var(--r-sm);
   border: 1px solid var(--line);
   background: var(--surface-2);
   color: var(--ink);
   cursor: pointer;
   line-height: 1;
 }
+.step:hover {
+  border-color: var(--ink-faint);
+}
 .ctl input[type="range"] {
-  accent-color: var(--accent);
+  accent-color: var(--acid);
   width: 90px;
 }
 .ctl.toggle {
@@ -153,7 +192,7 @@ body {
   cursor: pointer;
 }
 .ctl.toggle input {
-  accent-color: var(--accent);
+  accent-color: var(--acid);
 }
 
 .engines,
@@ -166,36 +205,24 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 5px 11px;
+  padding: 5px 12px;
   border: 1px solid var(--line);
   border-radius: 999px;
   color: var(--ink-soft);
   cursor: pointer;
   font-size: 0.82rem;
+  transition: border-color 0.2s ease-out, background 0.2s ease-out;
+}
+.chip-radio:hover {
+  border-color: var(--ink-faint);
 }
 .chip-radio.on {
-  border-color: var(--accent);
-  color: var(--accent-ink);
-  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  border-color: var(--acid);
+  color: var(--ink);
+  background: var(--acid-wash);
 }
 .chip-radio input {
-  accent-color: var(--accent);
-}
-
-.engine-note {
-  margin: 0;
-  padding-top: 2px;
-  font-size: 0.8rem;
-  line-height: 1.6;
-  color: var(--ink-faint);
-  max-width: 74ch;
-}
-.engine-note b {
-  color: var(--ink-soft);
-}
-.engine-note .warn {
-  color: var(--accent-ink);
-  font-weight: 600;
+  accent-color: var(--acid);
 }
 
 .status {
@@ -210,28 +237,27 @@ body {
   height: 9px;
   border-radius: 50%;
   background: var(--ink-faint);
+  flex: none;
 }
 .status.listening .status-dot {
-  background: var(--good);
-  box-shadow: 0 0 0 0 rgba(95, 184, 122, 0.6);
-  animation: pulse 1.6s infinite;
+  background: var(--acid);
+  animation: pulse 1.8s infinite;
 }
 .status.loading .status-dot {
-  background: var(--accent);
+  background: var(--caution);
 }
 .status.lost {
-  color: var(--danger);
+  color: var(--happy-accident);
 }
 .status.lost .status-dot {
-  background: var(--danger);
-  animation: pulse 1s infinite;
+  background: var(--happy-accident);
 }
 @keyframes pulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(95, 184, 122, 0.5);
+    box-shadow: 0 0 0 0 rgba(143, 255, 0, 0.45);
   }
   100% {
-    box-shadow: 0 0 0 7px rgba(95, 184, 122, 0);
+    box-shadow: 0 0 0 8px rgba(143, 255, 0, 0);
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -240,15 +266,18 @@ body {
   }
 }
 
+/* 행복한 사고 — 겁주지 않는다 */
 .banner {
-  padding: 10px 14px;
-  border-radius: 9px;
+  padding: 11px 15px;
+  border-radius: var(--r-md);
   font-size: 0.88rem;
+  line-height: 1.55;
 }
 .banner.error {
-  background: color-mix(in srgb, var(--danger) 16%, var(--surface));
-  border: 1px solid color-mix(in srgb, var(--danger) 45%, var(--line));
-  color: #ffd9d3;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--happy-accident);
+  color: var(--ink-soft);
 }
 
 /* ---- stage ---- */
@@ -282,6 +311,7 @@ body {
   gap: 8px;
   font-size: 0.8rem;
   color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
 }
 .editor-meta .dot {
   opacity: 0.5;
@@ -291,11 +321,15 @@ body {
   font-size: 0.8rem;
   background: none;
   border: none;
-  color: var(--accent-ink);
+  color: var(--ink-soft);
   cursor: pointer;
   padding: 0;
   text-decoration: underline;
   text-underline-offset: 3px;
+  text-decoration-color: var(--acid);
+}
+.link-btn:hover {
+  color: var(--ink);
 }
 .editor textarea {
   flex: 1;
@@ -303,16 +337,21 @@ body {
   width: 100%;
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: var(--r-lg);
   color: var(--ink);
   font: inherit;
   font-size: 1.02rem;
-  line-height: 1.7;
-  padding: 16px 18px;
+  line-height: 1.75;
+  padding: 18px 20px;
+  word-break: keep-all;
+}
+.editor textarea::placeholder {
+  color: var(--ink-faint);
 }
 .editor textarea:focus {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--acid);
   outline-offset: -1px;
+  border-color: transparent;
 }
 
 /* ---- prompter ---- */
@@ -321,9 +360,9 @@ body {
   flex: 1;
   min-height: 0;
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: var(--r-lg);
   overflow: hidden;
-  background: #0b0e13;
+  background: var(--stage);
 }
 .reading-guide {
   position: absolute;
@@ -331,8 +370,7 @@ body {
   right: 0;
   top: var(--reading);
   height: 0;
-  border-top: 2px solid color-mix(in srgb, var(--accent) 55%, transparent);
-  box-shadow: 0 0 18px 2px rgba(242, 178, 76, 0.12);
+  border-top: 1.5px solid color-mix(in srgb, var(--acid) 45%, transparent);
   z-index: 3;
   pointer-events: none;
 }
@@ -342,7 +380,7 @@ body {
   left: 10px;
   top: -5px;
   border: 5px solid transparent;
-  border-left-color: var(--accent);
+  border-left-color: var(--acid);
 }
 .edge-fade {
   position: absolute;
@@ -354,11 +392,11 @@ body {
 }
 .edge-fade.top {
   top: 0;
-  background: linear-gradient(#0b0e13, transparent);
+  background: linear-gradient(var(--stage), transparent);
 }
 .edge-fade.bottom {
   bottom: 0;
-  background: linear-gradient(transparent, #0b0e13);
+  background: linear-gradient(transparent, var(--stage));
 }
 .prompter {
   position: absolute;
@@ -377,7 +415,7 @@ body {
   padding-top: 50vh;
   font-weight: 600;
   line-height: 1.5;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.015em;
   color: var(--ink-soft);
   word-break: keep-all;
 }
@@ -387,20 +425,41 @@ body {
 .tok {
   cursor: pointer;
   border-radius: 5px;
-  transition: color 0.18s ease;
+  transition: color 0.18s ease-out;
 }
 .tok:hover {
   color: var(--ink);
 }
+/* 붓끝의 한 점: 지금 읽고 있는 그 단어 */
 .tok.is-current {
-  color: var(--accent-ink);
-  text-shadow: 0 0 22px rgba(242, 178, 76, 0.35);
+  color: var(--acid);
+  text-shadow: 0 0 26px rgba(143, 255, 0, 0.4);
 }
-/* dim words well past the current line for focus */
+
+.engine-note {
+  margin: 0;
+  padding-top: 2px;
+  font-size: 0.8rem;
+  line-height: 1.65;
+  color: var(--ink-faint);
+  max-width: 74ch;
+}
+.engine-note b {
+  color: var(--ink-soft);
+}
+.engine-note .warn {
+  color: var(--caution);
+  font-weight: 600;
+}
+.engine-note .easy {
+  color: var(--ink-soft);
+  font-style: italic;
+}
 
 button:focus-visible,
 input:focus-visible,
-.tok:focus-visible {
-  outline: 2px solid var(--accent);
+.tok:focus-visible,
+.link-btn:focus-visible {
+  outline: 2px solid var(--acid);
   outline-offset: 2px;
 }
