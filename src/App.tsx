@@ -91,6 +91,7 @@ export default function App() {
             <p>그냥 편하게 읽으세요. 화면은 제가 따라갈게요.</p>
           </div>
         </div>
+        <span className="credit">made by kyulolong</span>
       </header>
 
       <Controls

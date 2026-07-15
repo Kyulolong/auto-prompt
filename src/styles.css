@@ -76,14 +76,13 @@ body {
   align-items: center;
   gap: 12px;
 }
-/* 붓끝의 한 점 */
+/* 캔버스에 찍은 물감 한 방울 — 중립색. 형광은 '지금 할 일'에만 양보한다 */
 .logo {
   width: 34px;
   height: 34px;
   border-radius: 50%;
   flex: none;
-  background: var(--acid);
-  box-shadow: 0 0 22px rgba(143, 255, 0, 0.35);
+  background: var(--ink-soft);
 }
 .brand h1 {
   margin: 0;
@@ -95,6 +94,19 @@ body {
   margin: 0;
   font-size: 0.82rem;
   color: var(--ink-faint);
+}
+/* 서명. 조용히, 하지만 늘 거기에 */
+.credit {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  color: var(--ink-faint);
+  opacity: 0.65;
+  white-space: nowrap;
+  transition: opacity 0.2s ease-out;
+}
+.credit:hover {
+  opacity: 1;
 }
 
 /* ---- controls ---- */
@@ -131,13 +143,12 @@ body {
 .btn:hover {
   border-color: var(--ink-faint);
 }
-/* 이 화면의 형광 한 점 */
+/* 이 화면의 형광 한 점. 글로우 없음 — 어두운 방에서 halo는 눈을 찌른다 */
 .btn.primary {
   background: var(--acid);
   color: #14140f;
   border-color: transparent;
   font-weight: 700;
-  box-shadow: 0 0 24px rgba(143, 255, 0, 0.22);
 }
 .btn.primary:hover {
   background: var(--acid-soft);
@@ -182,7 +193,7 @@ body {
   border-color: var(--ink-faint);
 }
 .ctl input[type="range"] {
-  accent-color: var(--acid);
+  accent-color: var(--ink-soft);
   width: 90px;
 }
 .ctl.toggle {
@@ -192,7 +203,7 @@ body {
   cursor: pointer;
 }
 .ctl.toggle input {
-  accent-color: var(--acid);
+  accent-color: var(--ink-soft);
 }
 
 .engines,
@@ -216,13 +227,14 @@ body {
 .chip-radio:hover {
   border-color: var(--ink-faint);
 }
+/* 선택 상태는 따뜻한 중립으로. 라디오 점이 이미 선택을 말해준다 */
 .chip-radio.on {
-  border-color: var(--acid);
+  border-color: var(--ink-faint);
   color: var(--ink);
-  background: var(--acid-wash);
+  background: var(--surface-2);
 }
 .chip-radio input {
-  accent-color: var(--acid);
+  accent-color: var(--ink-soft);
 }
 
 .status {
@@ -239,9 +251,9 @@ body {
   background: var(--ink-faint);
   flex: none;
 }
+/* 살아있다는 신호. 점 하나면 충분하고, 퍼지는 halo는 없다 */
 .status.listening .status-dot {
   background: var(--acid);
-  animation: pulse 1.8s infinite;
 }
 .status.loading .status-dot {
   background: var(--caution);
@@ -251,19 +263,6 @@ body {
 }
 .status.lost .status-dot {
   background: var(--happy-accident);
-}
-@keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(143, 255, 0, 0.45);
-  }
-  100% {
-    box-shadow: 0 0 0 8px rgba(143, 255, 0, 0);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .status-dot {
-    animation: none !important;
-  }
 }
 
 /* 행복한 사고 — 겁주지 않는다 */
@@ -326,7 +325,7 @@ body {
   padding: 0;
   text-decoration: underline;
   text-underline-offset: 3px;
-  text-decoration-color: var(--acid);
+  text-decoration-color: var(--line);
 }
 .link-btn:hover {
   color: var(--ink);
@@ -370,7 +369,8 @@ body {
   right: 0;
   top: var(--reading);
   height: 0;
-  border-top: 1.5px solid color-mix(in srgb, var(--acid) 45%, transparent);
+  /* 가이드선은 조용한 참고선. 형광은 '지금 읽는 단어'가 가져간다 */
+  border-top: 1px solid color-mix(in srgb, var(--ink-faint) 30%, transparent);
   z-index: 3;
   pointer-events: none;
 }
@@ -378,9 +378,9 @@ body {
   content: "";
   position: absolute;
   left: 10px;
-  top: -5px;
-  border: 5px solid transparent;
-  border-left-color: var(--acid);
+  top: -4px;
+  border: 4px solid transparent;
+  border-left-color: color-mix(in srgb, var(--ink-faint) 60%, transparent);
 }
 .edge-fade {
   position: absolute;
@@ -430,10 +430,9 @@ body {
 .tok:hover {
   color: var(--ink);
 }
-/* 붓끝의 한 점: 지금 읽고 있는 그 단어 */
+/* 붓끝의 한 점: 지금 읽고 있는 그 단어. 큰 글씨엔 색만으로 충분하다 */
 .tok.is-current {
   color: var(--acid);
-  text-shadow: 0 0 26px rgba(143, 255, 0, 0.4);
 }
 
 .engine-note {
