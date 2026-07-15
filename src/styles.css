@@ -76,13 +76,13 @@ body {
   align-items: center;
   gap: 12px;
 }
-/* 캔버스에 찍은 물감 한 방울 — 중립색. 형광은 '지금 할 일'에만 양보한다 */
+/* 브랜드 마크. 작고 늘 같은 자리라 주목을 다투지 않는다 — 글로우만 없으면 된다 */
 .logo {
   width: 34px;
   height: 34px;
-  border-radius: 50%;
+  border-radius: 9px;
   flex: none;
-  background: var(--ink-soft);
+  background: radial-gradient(circle at 30% 30%, var(--acid-soft), var(--acid) 55%, #6fc400);
 }
 .brand h1 {
   margin: 0;
