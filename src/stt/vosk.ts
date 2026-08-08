@@ -13,7 +13,12 @@ import { type SttEngine, type SttHooks, splitWords } from "./types";
 // servers (incl. Vite) send `Content-Encoding: gzip`, so the browser silently
 // decompresses it and vosk-browser then fails to un-gzip. The bytes are still a
 // gzipped tar; vosk-browser detects that by content.
-const MODEL_URL = "/models/vosk-model-small-ko.bin";
+//
+// Built off BASE_URL rather than hardcoded to "/models/…": Vite rewrites `base`
+// into index.html and into imported assets, but never into a plain string like
+// this one. Hardcoded, it would keep pointing at the domain root and 404 as soon
+// as the app is mounted under /prompt/. BASE_URL always ends in a slash.
+const MODEL_URL = `${import.meta.env.BASE_URL}models/vosk-model-small-ko.bin`;
 
 // Minimal shapes for the lazily-loaded library.
 interface KaldiRecognizer {

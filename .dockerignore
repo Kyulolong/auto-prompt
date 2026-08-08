@@ -1,0 +1,27 @@
+# Keeps the build context small, and keeps a local `docker build` behaving the
+# same way Coolify's does — Coolify builds from a fresh clone, so anything
+# git-ignored is simply absent there.
+
+.git
+.gitignore
+node_modules
+dist
+
+# Committed tsc build cache. Stale entries make `tsc -b` skip type checking, so
+# the image should always start from nothing and actually check.
+*.tsbuildinfo
+
+# The 86MB model is git-ignored, so a clone never has it and the image
+# downloads it during the build. Excluding the local copy keeps both paths
+# identical instead of silently short-circuiting one of them.
+public/models
+
+# Netlify-only. nginx.conf does this job now; shipping these into the image
+# would just leave dead config files sitting in the web root.
+netlify.toml
+public/_headers
+public/_redirects
+
+.DS_Store
+**/.DS_Store
+.claude

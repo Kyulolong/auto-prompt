@@ -15,6 +15,14 @@ const crossOriginIsolation = {
 };
 
 export default defineConfig({
+  // The app is mounted at kyulolong.com/prompt, but Traefik strips the /prompt
+  // prefix before the container sees it — so the container has no way to learn
+  // where it's hosted, and the browser ends up asking for /assets/… and getting
+  // the homepage's 404. Baking the prefix in fixes it at the only layer that
+  // does know. There's no router here (one screen), so a fixed base is the whole
+  // solution: no trailing-slash redirect, no extra Traefik labels. The cost is
+  // that local dev now lives at localhost:5173/prompt/.
+  base: "/prompt/",
   plugins: [react(), crossOriginIsolation],
   // vosk-browser is a UMD module (its worker+wasm are inlined as a base64 blob,
   // so there are no external assets to break). Pre-bundle it so its named

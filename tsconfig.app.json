@@ -16,7 +16,10 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "types": ["dom-speech-recognition"]
+    // vite/client is what types import.meta.env — needed since vosk.ts builds
+    // the model URL off BASE_URL. It has to be listed explicitly because this
+    // "types" array turns off automatic @types discovery.
+    "types": ["dom-speech-recognition", "vite/client"]
   },
   "include": ["src"]
 }
