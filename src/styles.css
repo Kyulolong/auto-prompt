@@ -1,45 +1,59 @@
-/* 디자인 시스템: ~/.claude/DESIGN.md — "따뜻한 캔버스 위의 형광 초록 한 점"
+/* 디자인 시스템: ~/.claude/DESIGN.md — "흰 종이 위의 형광 초록 한 점"
  *
- * 이 앱은 촬영용이라 다크 한 가지에 의도적으로 커밋한다(밝은 프롬프터는 카메라
- * 옆에서 눈이 부시다). 형광 초록이 찍히는 '한 점'은 딱 두 곳뿐:
- *   - 지금 읽고 있는 그 단어
- *   - 시작 버튼
- * 나머지는 전부 따뜻한 중립색.
+ * 이 앱만 화면이 두 겹이다.
+ *
+ *   준비하는 곳(상단바·컨트롤·대본 편집기) = 라이트
+ *   읽는 곳(.prompter-wrap)              = 다크. 여기는 끝까지 어둡게 남긴다
+ *
+ * 전에는 앱 전체가 다크였는데, 그 이유는 사실 무대 하나 때문이었다. 촬영할 땐
+ * 카메라 옆에서 밝은 화면이 눈을 찌르고 얼굴에 빛이 튄다. 하지만 대본을 붙여넣고
+ * 설정을 만지는 건 촬영 전이라 그럴 이유가 없고, 어두운 폼은 그냥 읽기 어려웠다.
+ * 그래서 무대만 다크로 남기고 나머지는 브랜드와 같은 흰 종이로 뒤집었다.
+ * (무대 안에서는 글자 토큰을 다시 뒤집는다 — 아래 .prompter-wrap 참고)
+ *
+ * 형광 초록이 찍히는 '한 점'은 여전히 딱 두 곳:
+ *   - 무대 안: 지금 읽고 있는 그 단어
+ *   - 무대 밖: 시작 버튼
+ * 나머지는 전부 따뜻한 중립색. 밝은 바탕 위의 작은 도형·포커스링은 --acid 가
+ * 1.27:1 로 사라지므로 전부 --acid-deep 을 쓴다.
  */
 :root {
   /* 형광 한 점 */
   --acid: #8fff00;
-  --acid-soft: #b8ff5c;
-  --acid-wash: rgba(143, 255, 0, 0.16);
+  --acid-soft: #7ce600; /* 눌렀을 때. 밝은 바탕에선 '더 밝게'가 아니라 '더 진하게' */
+  /* "현재 배경에서 항상 보이는 초록". 밝은 바탕이 기본이라 라이트값을 둔다.
+     무대(.prompter-wrap) 안에서만 #8fff00 으로 뒤집힌다. */
+  --acid-deep: #3d6b00;
+  --acid-wash: #eaffcb;
   /* 형광 '위에' 올라가는 글자. 테마가 붙어도 절대 뒤집지 않는다 — #8FFF00은 늘 밝으므로
    * 그 위 글자는 늘 어두워야 한다. (--ink를 쓰면 다크에서 1.1:1로 증발한다) */
   --on-acid: #14140f;
 
-  /* 따뜻한 캔버스 (dark) — 푸른 검정이 아니라 올리브 기운의 검정 */
-  --bg: #14140f;
-  --surface: #1c1b15;
-  --surface-2: #24231b;
-  --line: #333226;
-  --ink: #f0eee4;
-  --ink-soft: #aba795;
-  --ink-faint: #8a8574;
-  --stage: #0f0e0a; /* 프롬프터 바탕: 가장 깊은 따뜻한 검정 */
+  /* 흰 종이 — 순수 회색이 아니라 모래 기운의 중립색 */
+  --bg: #ffffff;
+  --surface: #fafaf7;
+  --surface-2: #f5f4ef;
+  --line: #e8e7e0;
+  --ink: #1a1a17;
+  --ink-soft: #55544c;
+  --ink-faint: #73726a;
+  --stage: #0f0e0a; /* 프롬프터 바탕: 가장 깊은 따뜻한 검정. 여기만 안 뒤집는다 */
 
   /* 의미색 */
-  --happy-accident: #e8834a; /* 에러 — 빨강이 아니라 따뜻한 테라코타 */
-  --caution: #e0a93b;
+  --happy-accident: #b4551f; /* 에러 — 빨강이 아니라 따뜻한 테라코타 */
+  --caution: #8a5a00;
 
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.4);
+  --shadow-sm: 0 1px 2px rgba(60, 52, 30, 0.05);
+  --shadow-md: 0 6px 20px -6px rgba(60, 52, 30, 0.12);
 
-  --r-sm: 8px;
-  --r-md: 12px;
-  --r-lg: 18px;
+  --r-sm: 10px;
+  --r-md: 16px;
+  --r-lg: 24px;
 
   --font-sans: Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Segoe UI", "Noto Sans KR", sans-serif;
   --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
 
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 * {
@@ -88,14 +102,15 @@ body {
   font-weight: 700;
   letter-spacing: -0.015em;
 }
-/* 브랜드 마크: 워드마크 앞에 찍는 초록 점 하나.
- * 납작한 단색 정원 — 그라데이션·글로우·테두리 없음. 서비스마다 이 점 하나로 통일한다. */
+/* 브랜드 마크 — ㄱ 과 점 (~/.claude/DESIGN.md §7).
+ * 형광 도형을 어두운 외곽선이 감싼 2겹 SVG. 색만 뽑아 쓰거나 외곽선을 빼면
+ * 흰 바탕에서 1.27:1 로 사라진다. 파일 대신 data URI 로 박는 이유는
+ * 이 앱이 kyulolong.com/<slug> 에 얹히기 때문 — 상대경로 자산은 루트로 풀려 404 난다. */
 .logo {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
+  width: 17px;
+  height: 17px;
   flex: none;
-  background: var(--acid);
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'%3E%3Cpath d='M5.6 3.2 H26.4 L18.39 21.20 L12.37 21.20 L18.11 8.3 H5.6 Z' fill='%2314180F' stroke='%2314180F' stroke-width='3.0' stroke-linejoin='round'/%3E%3Ccircle cx='15.38' cy='27.65' r='3.85' fill='%2314180F'/%3E%3Cpath d='M5.6 3.2 H26.4 L18.39 21.20 L12.37 21.20 L18.11 8.3 H5.6 Z' fill='%238FFF00' stroke='%238FFF00' stroke-width='1.5' stroke-linejoin='round'/%3E%3Ccircle cx='15.38' cy='27.65' r='3.1' fill='%238FFF00'/%3E%3C/svg%3E") no-repeat center / contain;
 }
 .brand p {
   margin: 0;
@@ -258,9 +273,10 @@ body {
   background: var(--ink-faint);
   flex: none;
 }
-/* 살아있다는 신호. 점 하나면 충분하고, 퍼지는 halo는 없다 */
+/* 살아있다는 신호. 점 하나면 충분하고, 퍼지는 halo는 없다.
+   상태바는 밝은 바탕이라 --acid 가 아니라 --acid-deep 이어야 점이 보인다. */
 .status.listening .status-dot {
-  background: var(--acid);
+  background: var(--acid-deep);
 }
 .status.loading .status-dot {
   background: var(--caution);
@@ -355,13 +371,29 @@ body {
   color: var(--ink-faint);
 }
 .editor textarea:focus {
-  outline: 2px solid var(--acid);
+  /* 편집기는 이제 밝은 면 위에 있다 — 형광 링은 여기서 안 보인다 */
+  outline: 2px solid var(--acid-deep);
   outline-offset: -1px;
   border-color: transparent;
 }
 
 /* ---- prompter ---- */
+/* 무대 안만 다크다.
+ *
+ * 글자 토큰을 여기서 한 번 더 선언하면 무대 안의 모든 자식이 자동으로 따라온다 —
+ * .tok / .reading-guide / .edge-fade 를 각각 고칠 필요가 없다. 무대 밖은 흰 종이,
+ * 무대 안은 검은 무대. 같은 컴포넌트가 두 배경에서 다 살아 있게 하는 방법이다.
+ *
+ * --acid-deep 도 여기서 뒤집는다. 이 토큰의 뜻은 '진한 초록'이 아니라
+ * "지금 이 배경에서 항상 보이는 초록"이라서, 검은 무대에서는 형광 그 자체다.
+ */
 .prompter-wrap {
+  --ink: #f2f1e9;
+  --ink-soft: #a9a79a;
+  --ink-faint: #8a8879;
+  --acid-deep: #8fff00;
+  color-scheme: dark;
+
   position: relative;
   flex: 1;
   min-height: 0;
@@ -462,10 +494,12 @@ body {
   font-style: italic;
 }
 
+/* 포커스링은 --acid 가 아니라 --acid-deep. 밝은 바탕에선 형광 링이 안 보이고,
+   무대 안에서는 이 토큰이 알아서 #8fff00 으로 뒤집힌다 — 한 줄로 양쪽이 해결된다. */
 button:focus-visible,
 input:focus-visible,
 .tok:focus-visible,
 .link-btn:focus-visible {
-  outline: 2px solid var(--acid);
+  outline: 2px solid var(--acid-deep);
   outline-offset: 2px;
 }
