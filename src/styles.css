@@ -87,11 +87,17 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  /* 오른쪽이 '돌아가기 + 서명' 두 개가 되면서 좁은 화면에서 브랜드를 밀어낸다.
+     이 앱엔 브레이크포인트가 없으므로 미디어쿼리 대신 줄바꿈으로 받는다. */
+  flex-wrap: wrap;
+  gap: 10px 14px;
 }
 .brand {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  /* 이게 없으면 태그라인이 안 접혀서 오른쪽을 화면 밖으로 밀어낸다 */
+  min-width: 0;
 }
 .brand h1 {
   display: flex;
@@ -117,6 +123,32 @@ body {
   font-size: 0.82rem;
   color: var(--ink-faint);
 }
+.topbar-side {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+/* 홈페이지로 돌아가는 문. 중립색이다 — 이 화면의 형광 한 점은 시작 버튼 몫이고(§2),
+ * 여기에 하나 더 찍으면 정작 눌러야 할 버튼이 묻힌다. */
+.back {
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  text-decoration: none;
+  white-space: nowrap;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 5px 12px;
+  transition: border-color 0.2s ease-out, color 0.2s ease-out;
+}
+.back:hover {
+  border-color: var(--ink-faint);
+  color: var(--ink);
+}
+.back:focus-visible {
+  outline: 2px solid var(--acid-deep);
+  outline-offset: 2px;
+}
+
 /* 서명. 조용히, 하지만 늘 거기에 */
 .credit {
   font-family: var(--font-mono);

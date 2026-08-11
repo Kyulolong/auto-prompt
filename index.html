@@ -5,6 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#ffffff" />
     <title>보이스 프롬프터 · Voice Teleprompter</title>
+    <!-- 파비콘을 선언하지 않으면 브라우저가 /favicon.ico 로 폴백하는데, 이 앱은
+         kyulolong.com/prompt 에 얹혀 있어서 그 요청이 홈페이지로 간다. 즉 지금까지
+         탭에 뜨던 마크는 우리 것이 아니라 홈페이지 것을 빌려 쓴 것이었다.
+
+         파일 대신 data URI 인 이유는 .logo 와 같다 — 상대경로 자산은 브라우저가
+         루트 기준으로 풀어서 404 난다. 도형은 docs/brand/favicon-16px.svg 원본
+         그대로다(16px 광학 보정판). 새로 그리지 말고 그 파일에서 다시 뽑을 것. -->
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%20fill='none'%3E%3Cpath%20d='M5.6%203.2%20H26.4%20L18.39%2021.20%20L12.37%2021.20%20L18.11%208.3%20H5.6%20Z'%20fill='%2314180F'%20stroke='%2314180F'%20stroke-width='3.0'%20stroke-linejoin='round'/%3E%3Ccircle%20cx='15.38'%20cy='27.65'%20r='3.85'%20fill='%2314180F'/%3E%3Cpath%20d='M5.6%203.2%20H26.4%20L18.39%2021.20%20L12.37%2021.20%20L18.11%208.3%20H5.6%20Z'%20fill='%238FFF00'%20stroke='%238FFF00'%20stroke-width='1.5'%20stroke-linejoin='round'/%3E%3Ccircle%20cx='15.38'%20cy='27.65'%20r='3.1'%20fill='%238FFF00'/%3E%3C/svg%3E"
+    />
   </head>
   <body>
     <div id="root"></div>

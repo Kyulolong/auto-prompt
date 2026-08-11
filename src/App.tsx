@@ -104,7 +104,17 @@ export default function App() {
           </h1>
           <p>그냥 편하게 읽으세요. 화면은 제가 따라갈게요.</p>
         </div>
-        <span className="credit">made by kyulolong</span>
+        <div className="topbar-side">
+          {/* 홈페이지의 이 서비스 소개로 돌아간다.
+              루트 상대경로(/services/prompt) 가 아니라 절대 URL 인 이유는 로컬
+              dev(localhost:5173/prompt/) 에서도 같은 곳을 가리키게 하려는 것이다.
+              보관함의 /login 링크는 반대로 상대경로여야 한다 — 세션 공유가 같은
+              오리진을 전제로 하기 때문에 거기서 도메인을 박으면 오히려 깨진다. */}
+          <a className="back" href="https://kyulolong.com/services/prompt">
+            <span aria-hidden="true">←</span> 규로롱
+          </a>
+          <span className="credit">made by kyulolong</span>
+        </div>
       </header>
 
       <Controls
