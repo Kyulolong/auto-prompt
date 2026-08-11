@@ -1,0 +1,55 @@
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1200px; height: 630px; overflow: hidden; }
+  body {
+    background: linear-gradient(160deg, #222432 0%, #101422 55%, #060c15 100%);
+    display: flex;
+    align-items: center;
+    gap: 64px;
+    padding: 0 84px;
+    font-family: "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+    color: #ececee;
+  }
+  .left { flex: 1; min-width: 0; }
+  h1 {
+    font-size: 76px;
+    font-weight: 800;
+    letter-spacing: -0.035em;
+    line-height: 1.1;
+  }
+  .tag {
+    margin-top: 26px;
+    font-size: 33px;
+    font-weight: 500;
+    line-height: 1.45;
+    color: #a8adb8;
+    letter-spacing: -0.02em;
+  }
+  .url {
+    margin-top: 54px;
+    font-size: 23px;
+    letter-spacing: 0.02em;
+    color: #6f737b;
+  }
+  /* 아이콘과 같은 모티프: 대본 줄, 지금 읽는 줄 하나만 형광 */
+  .bars { flex: none; width: 380px; position: relative; }
+  .bar { height: 30px; border-radius: 15px; margin-bottom: 22px; }
+  .dot {
+    position: absolute; top: -46px; right: 8px;
+    width: 34px; height: 34px; border-radius: 50%; background: #ff5e4c;
+  }
+</style>
+<div class="left">
+  <h1>보이스 프롬프터</h1>
+  <p class="tag">목소리를 따라 대본이<br />알아서 내려옵니다</p>
+  <p class="url">kyulolong.com/prompt</p>
+</div>
+<div class="bars">
+  <div class="dot"></div>
+  <div class="bar" style="width: 82%; background: #6f737b"></div>
+  <div class="bar" style="width: 100%; background: #6f737b"></div>
+  <div class="bar" style="width: 74%; background: #9bf900"></div>
+  <div class="bar" style="width: 94%; background: #ececee"></div>
+  <div class="bar" style="width: 86%; background: #ececee"></div>
+  <div class="bar" style="width: 58%; background: #ececee; margin-bottom: 0"></div>
+</div>

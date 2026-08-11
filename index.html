@@ -4,7 +4,66 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#ffffff" />
-    <title>보이스 프롬프터 · Voice Teleprompter</title>
+
+    <!-- 제목·설명은 홈페이지의 /services/prompt 와 일부러 다르게 쓴다. 두 페이지가
+         같은 문구를 들고 있으면 검색에서 서로를 갉아먹는다. 소개 페이지는 "왜
+         만들었나"를 읽으러 오는 곳이고, 여기는 "지금 쓰러" 오는 곳이라 그 의도에
+         맞는 말을 싣는다. -->
+    <title>보이스 프롬프터 · 목소리를 따라 내려오는 한국어 텔레프롬프터</title>
+    <meta
+      name="description"
+      content="말하는 속도에 맞춰 대본이 알아서 따라 내려오는 한국어 텔레프롬프터. 설치 없이 브라우저에서 바로 쓰고, 오프라인 모드에서는 음성이 기기 밖으로 나가지 않습니다."
+    />
+
+    <!-- /prompt 와 /prompt/ 가 같은 문서를 그대로 내보낸다(둘 다 200). 검색엔진에는
+         서로 다른 두 URL 이라, 정하지 않으면 평가가 둘로 쪼개진다. 홈페이지가
+         링크하는 형태(슬래시 없음)로 못을 박는다.
+
+         아래 절대 URL 들은 도메인과 마운트 경로를 직접 들고 있다. og:image 는 규격상
+         절대 URL 이어야 해서 Vite 의 base 로는 못 만든다 — manifest 와 같은 이유로,
+         마운트 경로를 바꾸면 여기도 같이 고쳐야 한다. -->
+    <link rel="canonical" href="https://kyulolong.com/prompt" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="규로롱" />
+    <meta property="og:locale" content="ko_KR" />
+    <meta property="og:url" content="https://kyulolong.com/prompt" />
+    <meta property="og:title" content="보이스 프롬프터 — 목소리를 따라 대본이 알아서 내려옵니다" />
+    <meta
+      property="og:description"
+      content="말하는 속도에 맞춰 대본이 따라 내려오는 한국어 텔레프롬프터. 설치 없이 브라우저에서 바로."
+    />
+    <meta property="og:image" content="https://kyulolong.com/prompt/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="보이스 프롬프터 — 대본 줄 가운데 지금 읽는 한 줄만 형광으로 켜져 있다" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="보이스 프롬프터 — 목소리를 따라 대본이 알아서 내려옵니다" />
+    <meta
+      name="twitter:description"
+      content="말하는 속도에 맞춰 대본이 따라 내려오는 한국어 텔레프롬프터. 설치 없이 브라우저에서 바로."
+    />
+    <meta name="twitter:image" content="https://kyulolong.com/prompt/og.png" />
+
+    <!-- 검색엔진에 "이건 글이 아니라 웹앱"이라고 알려준다. 별점(aggregateRating)은
+         넣지 않는다 — 받은 적 없는 평가를 적는 순간 구조화 데이터 위반이다. -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "보이스 프롬프터",
+        "url": "https://kyulolong.com/prompt",
+        "description": "말하는 속도에 맞춰 대본이 알아서 따라 내려오는 한국어 텔레프롬프터.",
+        "applicationCategory": "MultimediaApplication",
+        "operatingSystem": "Web",
+        "inLanguage": "ko",
+        "isAccessibleForFree": true,
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "KRW" },
+        "author": { "@type": "Person", "name": "규로롱", "url": "https://kyulolong.com" }
+      }
+    </script>
     <!-- 서비스 고유 아이콘. 앱 안 헤더 마크는 여전히 하우스 ㄱ+점이고(.logo),
          탭·홈화면 아이콘만 이 앱의 얼굴을 쓴다 — wave-sound 와 같은 구성이다.
 
@@ -32,6 +91,24 @@
   </head>
   <body>
     <div id="root"></div>
+    <!-- 이 앱은 전부 클라이언트에서 그린다. 자바스크립트가 꺼져 있으면 위 div 가
+         빈 채로 남아서, 사람도 크롤러도 여기서 읽을 게 하나도 없다.
+         화면에 있는 것과 같은 말만 적는다 — 다른 말을 심으면 그건 클로킹이다. -->
+    <noscript>
+      <div class="noscript">
+        <h1>보이스 프롬프터</h1>
+        <p>
+          말하는 속도에 맞춰 대본이 알아서 따라 내려오는 한국어 텔레프롬프터입니다. 대본을
+          붙여넣고 시작을 누르면, 지금 읽고 있는 위치를 찾아 그 줄을 화면 가운데에 붙들어
+          둡니다. 마이크가 없을 때는 일정한 속도로 미는 자동 스크롤로도 쓸 수 있습니다.
+        </p>
+        <p>
+          오프라인 엔진을 고르면 인식이 기기 안에서 끝나서 음성이 밖으로 나가지 않습니다.
+          쓰려면 자바스크립트를 켜 주세요.
+        </p>
+        <p><a href="https://kyulolong.com/services/prompt">서비스 소개 보기</a></p>
+      </div>
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
