@@ -377,6 +377,153 @@ body {
   border-color: transparent;
 }
 
+/* ---- compose: 편집기 + 그 아래 선반 ---- */
+.compose {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ---- library ---- */
+/* 선반이지 무대가 아니다. 무대 밖의 형광 한 점은 시작 버튼이 이미 쓰고 있으므로
+ * 여기는 끝까지 중립색으로 둔다. 저장 버튼에 색을 한 번 더 쓰면 "한 점" 규칙이
+ * 무너지고, 정작 눌러야 할 시작 버튼이 묻힌다.
+ */
+.library {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+}
+.library-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.library-head h2 {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.library-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.library-who {
+  font-size: 0.8rem;
+  color: var(--ink-faint);
+  max-width: 12rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.btn.small {
+  padding: 6px 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+.btn:disabled,
+.link-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.btn:disabled:hover {
+  border-color: var(--line);
+}
+.link-btn:disabled:hover {
+  color: var(--ink-soft);
+}
+.library-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  /* 보관함이 길어져도 편집기를 밀어내지 않는다 */
+  max-height: 30vh;
+  overflow-y: auto;
+}
+.library-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-right: 4px;
+  border-radius: var(--r-sm);
+}
+/* 지금 편집기에 올라와 있는 그 대본 */
+.library-list li.on {
+  background: var(--surface-2);
+}
+.library-item {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font: inherit;
+  text-align: left;
+  background: none;
+  border: none;
+  color: var(--ink);
+  cursor: pointer;
+  padding: 7px 10px;
+  border-radius: var(--r-sm);
+}
+.library-item:hover:not(:disabled) {
+  background: var(--surface-2);
+}
+.library-item:disabled {
+  cursor: default;
+}
+.library-title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.9rem;
+}
+.library-when {
+  flex: 0 0 auto;
+  font-size: 0.78rem;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+}
+.library-empty,
+.library-nudge {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: var(--ink-faint);
+}
+.library-nudge a {
+  color: var(--ink-soft);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.library-nudge a:hover {
+  color: var(--ink);
+}
+/* 실패는 배너와 같은 결로 — 테라코타 한 줄, 빨강 아님 */
+.library-hint {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--happy-accident);
+  border-radius: var(--r-md);
+  padding: 9px 13px;
+}
+
 /* ---- prompter ---- */
 /* 무대 안만 다크다.
  *

@@ -2,11 +2,19 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Editor } from "./ui/Editor";
 import { Controls, type Settings } from "./ui/Controls";
 import { Prompter } from "./ui/Prompter";
+import { Library } from "./ui/Library";
 import { useController } from "./ui/useController";
 import { isWebSpeechAvailable } from "./stt/webspeech";
 
 const LS_SCRIPT = "ap.script";
 const LS_SETTINGS = "ap.settings";
+/**
+ * 지금 편집기에 있는 대본이 보관함의 어느 항목에서 온 것인지.
+ *
+ * 새로고침해도 남겨둔다 — 안 그러면 불러온 대본을 고치고 저장했을 때 같은 대본이
+ * 보관함에 하나 더 생긴다.
+ */
+const LS_SAVED_ID = "ap.savedId";
 
 const DEFAULT_SETTINGS: Settings = {
   mode: "voice",
@@ -31,6 +39,7 @@ export default function App() {
   const controller = useController();
   const { running, error } = controller.state;
   const [text, setText] = useState(() => localStorage.getItem(LS_SCRIPT) ?? "");
+  const [savedId, setSavedId] = useState<string | null>(() => localStorage.getItem(LS_SAVED_ID));
   const [settings, setSettings] = useState<Settings>(loadSettings);
   const wakeLock = useRef<WakeLockSentinel | null>(null);
 
@@ -40,6 +49,10 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem(LS_SETTINGS, JSON.stringify(settings));
   }, [settings]);
+  useEffect(() => {
+    if (savedId) localStorage.setItem(LS_SAVED_ID, savedId);
+    else localStorage.removeItem(LS_SAVED_ID);
+  }, [savedId]);
 
   // Keep the screen awake while prompting.
   const acquireWakeLock = useCallback(async () => {
@@ -113,7 +126,19 @@ export default function App() {
         {running ? (
           <Prompter controller={controller} fontSize={settings.fontSize} mirror={settings.mirror} readingLineFrac={settings.readingLineFrac} />
         ) : (
-          <Editor value={text} onChange={setText} disabled={running} />
+          <div className="compose">
+            <Editor value={text} onChange={setText} disabled={running} />
+            <Library
+              text={text}
+              currentId={savedId}
+              onLoad={(s) => {
+                setText(s.body);
+                setSavedId(s.id);
+              }}
+              onSaved={(s) => setSavedId(s.id)}
+              onDropped={(id) => setSavedId((cur) => (cur === id ? null : cur))}
+            />
+          </div>
         )}
       </main>
     </div>
