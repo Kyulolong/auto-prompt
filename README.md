@@ -7,6 +7,11 @@
 - **오프라인 가능.** Vosk 엔진은 인터넷 없이 기기에서 인식한다.
 - **긴 대본 OK.** 커서 주변만 보는 윈도우 방식이라, 10초든 10분이든 비용이 일정하다.
 
+> **이 앱은 `kyulolong.com/prompt/` 에 얹혀 있다.** 경로 위에 사는 앱이라 따로 지켜야 할 것들이 있다 —
+> base·끝 슬래시·파비콘·SEO·Supabase·nginx·배포 순서. 손대기 전에
+> [규로롱 서비스 체크리스트](https://github.com/Kyulolong/kyulolong-site/blob/main/docs/SERVICE-CHECKLIST.md)를 읽을 것.
+> 거기 적힌 함정은 대부분 이 레포에서 한 번씩 밟은 것들이다.
+
 ---
 
 ## 빠른 시작
