@@ -5,17 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#ffffff" />
     <title>보이스 프롬프터 · Voice Teleprompter</title>
-    <!-- 파비콘을 선언하지 않으면 브라우저가 /favicon.ico 로 폴백하는데, 이 앱은
-         kyulolong.com/prompt 에 얹혀 있어서 그 요청이 홈페이지로 간다. 즉 지금까지
-         탭에 뜨던 마크는 우리 것이 아니라 홈페이지 것을 빌려 쓴 것이었다.
+    <!-- 서비스 고유 아이콘. 앱 안 헤더 마크는 여전히 하우스 ㄱ+점이고(.logo),
+         탭·홈화면 아이콘만 이 앱의 얼굴을 쓴다 — wave-sound 와 같은 구성이다.
 
-         파일 대신 data URI 인 이유는 .logo 와 같다 — 상대경로 자산은 브라우저가
-         루트 기준으로 풀어서 404 난다. 도형은 docs/brand/favicon-16px.svg 원본
-         그대로다(16px 광학 보정판). 새로 그리지 말고 그 파일에서 다시 뽑을 것. -->
-    <link
-      rel="icon"
-      href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%20fill='none'%3E%3Cpath%20d='M5.6%203.2%20H26.4%20L18.39%2021.20%20L12.37%2021.20%20L18.11%208.3%20H5.6%20Z'%20fill='%2314180F'%20stroke='%2314180F'%20stroke-width='3.0'%20stroke-linejoin='round'/%3E%3Ccircle%20cx='15.38'%20cy='27.65'%20r='3.85'%20fill='%2314180F'/%3E%3Cpath%20d='M5.6%203.2%20H26.4%20L18.39%2021.20%20L12.37%2021.20%20L18.11%208.3%20H5.6%20Z'%20fill='%238FFF00'%20stroke='%238FFF00'%20stroke-width='1.5'%20stroke-linejoin='round'/%3E%3Ccircle%20cx='15.38'%20cy='27.65'%20r='3.1'%20fill='%238FFF00'/%3E%3C/svg%3E"
-    />
+         파비콘을 아예 선언하지 않으면 브라우저가 /favicon.ico 로 폴백하는데,
+         이 앱은 kyulolong.com/prompt 에 얹혀 있어서 그 요청이 홈페이지로 간다.
+         한동안 탭에 뜨던 마크는 그렇게 홈페이지 것을 빌려 쓰던 것이었다.
+
+         경로를 루트 절대경로로 두는 이유: Vite 가 빌드할 때 base 를 붙여
+         /prompt/icon-32.png 로 바꿔준다. 여기에 /prompt 를 직접 적으면 dev 에서
+         이중으로 붙는다.
+
+         16px 만 따로 그린 이유: 원본은 가는 막대가 6줄이라 16px 에서 회색
+         덩어리로 뭉갠다(DESIGN.md §7 — "16px 로 렌더해서 확인하기 전엔 완성이
+         아니다"). brand/icon-16.svg 가 같은 구성을 3줄로 줄인 광학 보정판이다.
+         32px 부터는 원본이 그대로 읽히므로 축소만 한다.
+         원본은 brand/app-icon-1024.png — 크기를 다시 뽑을 땐 거기서 뽑을 것. -->
+    <link rel="icon" sizes="32x32" href="/icon-32.png" />
+    <link rel="icon" sizes="16x16" href="/icon-16.png" />
+    <link rel="apple-touch-icon" href="/icon-180.png" />
+    <!-- manifest 안의 start_url/scope 는 /prompt 를 직접 박고 있다. 정적 파일이라
+         Vite 가 내용을 건드리지 않기 때문이다 — 마운트 경로를 바꾸면 vite.config 의
+         base 와 여기 둘 다 고쳐야 한다. (아이콘 경로는 manifest 자기 주소 기준의
+         상대경로라 그대로 따라온다) -->
+    <link rel="manifest" href="/manifest.webmanifest" />
   </head>
   <body>
     <div id="root"></div>

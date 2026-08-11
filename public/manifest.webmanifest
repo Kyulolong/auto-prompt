@@ -1,0 +1,14 @@
+{
+  "name": "보이스 프롬프터",
+  "short_name": "프롬프터",
+  "description": "내 목소리를 듣고 대본이 알아서 따라 내려온다",
+  "start_url": "/prompt",
+  "scope": "/prompt",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    { "src": "icon-180.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
