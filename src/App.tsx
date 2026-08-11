@@ -99,7 +99,17 @@ export default function App() {
       <header className="topbar">
         <div className="brand">
           <h1>
-            <span className="logo" aria-hidden="true" />
+            {/* 마크를 누르면 홈페이지의 이 서비스 소개로 간다. 오른쪽 '← 규로롱' 과
+                같은 곳인데, 로고를 눌러보는 사람이 따로 있어서 둘 다 둔다.
+                제목까지 링크로 묶지 않는 이유는 h1 전체가 파란 링크처럼 읽혀서
+                — 앱 이름이 아니라 남의 사이트로 가는 문처럼 보인다. */}
+            <a
+              className="logo-link"
+              href="https://kyulolong.com/services/prompt"
+              aria-label="규로롱 — 이 서비스 소개로"
+            >
+              <span className="logo" aria-hidden="true" />
+            </a>
             보이스 프롬프터
           </h1>
           <p>그냥 편하게 읽으세요. 화면은 제가 따라갈게요.</p>

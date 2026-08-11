@@ -112,6 +112,18 @@ body {
  * 형광 도형을 어두운 외곽선이 감싼 2겹 SVG. 색만 뽑아 쓰거나 외곽선을 빼면
  * 흰 바탕에서 1.27:1 로 사라진다. 파일 대신 data URI 로 박는 이유는
  * 이 앱이 kyulolong.com/<slug> 에 얹히기 때문 — 상대경로 자산은 루트로 풀려 404 난다. */
+/* 마크를 감싸는 링크. flex 자식이라 크기를 마크에 그대로 넘기고,
+ * line-height 를 0 으로 눌러 h1 의 행 높이를 건드리지 않는다. */
+.logo-link {
+  flex: none;
+  display: flex;
+  line-height: 0;
+  border-radius: 4px;
+}
+.logo-link:focus-visible {
+  outline: 2px solid var(--acid-deep);
+  outline-offset: 3px;
+}
 .logo {
   width: 17px;
   height: 17px;
