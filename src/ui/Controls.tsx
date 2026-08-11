@@ -161,7 +161,6 @@ export function Controls({ running, status, lost, paused, settings, onSettings, 
             )}
             <b>Vosk</b>는 첫 실행 때 한국어 모델(약 82MB)을 받은 뒤 <b>완전 오프라인·로컬</b>로 돌아갑니다(음성이 밖으로 안 나가요). 데스크톱 Chrome 권장.{" "}
             <b>Web Speech</b>는 설치 없이 바로 되지만 인터넷이 필요하고 음성이 구글로 전송돼요. 고르고 시작만 누르면 끝이에요.{" "}
-            <span className="easy">참 쉽죠?</span>
           </p>
         </>
       )}
