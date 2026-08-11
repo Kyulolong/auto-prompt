@@ -161,7 +161,7 @@ export function Library({ text, currentId, onLoad, onSaved, onDropped }: Props) 
       {account.anonymous ? (
         <p className="library-nudge">
           지금은 이 브라우저에만 보관돼요.{" "}
-          <a href="/login?next=/prompt">계정을 만들면</a> 다른 기기에서도 그대로 이어집니다. 지금
+          <a href="/login?next=/prompt/">계정을 만들면</a> 다른 기기에서도 그대로 이어집니다. 지금
           보관한 것도 같이 따라가요.
         </p>
       ) : null}
