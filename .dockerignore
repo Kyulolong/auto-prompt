@@ -16,12 +16,6 @@ dist
 # identical instead of silently short-circuiting one of them.
 public/models
 
-# Netlify-only. nginx.conf does this job now; shipping these into the image
-# would just leave dead config files sitting in the web root.
-netlify.toml
-public/_headers
-public/_redirects
-
 .DS_Store
 **/.DS_Store
 .claude
