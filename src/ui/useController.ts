@@ -99,13 +99,33 @@ export function useController() {
       if (history.current.length > HISTORY_MAX) history.current = history.current.slice(-HISTORY_MAX);
       interim.current = [];
     } else {
-      interim.current = r.words;
+      // Safari's interim is cumulative: it restates words that were already
+      // finalized. Drop the longest interim prefix that matches the tail of
+      // history, so the query never carries the same phrase twice — duplicated
+      // phrases are what pull the aligner back to text the reader passed.
+      let words = r.words;
+      const past = history.current;
+      for (let k = Math.min(words.length, past.length); k > 0; k--) {
+        const off = past.length - k;
+        let match = true;
+        for (let i = 0; i < k; i++) {
+          if (past[off + i] !== words[i]) {
+            match = false;
+            break;
+          }
+        }
+        if (match) {
+          words = words.slice(k);
+          break;
+        }
+      }
+      interim.current = words;
     }
     const tail = [...history.current.slice(-TAIL_WORDS), ...interim.current].slice(-TAIL_WORDS);
     if (tail.length === 0) return;
 
     const now = performance.now();
-    const res = aligner.push(tail, now);
+    const res = aligner.push(tail, now, r.isFinal);
     setHighlight(res.token);
     scroll.update({ confirmedToken: res.token, tokensPerSec: aligner.tokensPerSec, speaking: true, lost: res.lost, now });
 

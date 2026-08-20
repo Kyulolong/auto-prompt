@@ -6,8 +6,9 @@ let pass = 0;
 let fail = 0;
 
 // expect: a token index (matched within ±1) — a "hold" is just expecting the
-// same index as the previous step.
-function scenario(name: string, scriptText: string, steps: Array<[string[], number, string]>) {
+// same index as the previous step. A step's 4th element marks it as an INTERIM
+// hypothesis (settled=false): it may advance the cursor but never pull it back.
+function scenario(name: string, scriptText: string, steps: Array<[string[], number, string, boolean?]>) {
   const prepared = prepareScript(scriptText);
   const words = prepared.tokens.map((t) => t.raw);
   console.log(`\n=== ${name} ===`);
@@ -15,9 +16,9 @@ function scenario(name: string, scriptText: string, steps: Array<[string[], numb
   const aligner = new Aligner(prepared);
   aligner.reset(0);
   let t = 0;
-  for (const [tail, expect, note] of steps) {
+  for (const [tail, expect, note, isInterim] of steps) {
     t += 420;
-    const r = aligner.push(tail, t);
+    const r = aligner.push(tail, t, !isInterim);
     const label = prepared.tokens[r.token]?.raw ?? "?";
     const ok = Math.abs(r.token - expect) <= 1 && !r.lost;
     ok ? pass++ : fail++;
@@ -67,6 +68,23 @@ scenario(
     [["앱을"], 13, "짧고 모호한 단어 하나로는 뒤로 안 튐 (지터 억제)"],
     [["둘", "다", "만듭니다"], 13, "가까운 구절 재독(강한 매칭) → 안정적으로 유지/복귀"],
     [["그리고", "챗봇도", "개발합니다"], 16, "다시 앞으로 이어서"],
+  ],
+);
+
+scenario(
+  "interim 번복(사파리) → 뒤로 안 끌림 · final 재독은 되돌아감",
+  "오늘 회의에서 다룰 안건은 세 가지입니다 첫째는 예산 둘째는 일정 셋째는 채용입니다",
+  [
+    [["오늘", "회의에서"], 1, "interim 낭독 (앞으로는 됨)", true],
+    [["다룰", "안건은"], 3, "interim 낭독", true],
+    [["세", "가지입니다"], 5, "interim 낭독", true],
+    [["첫째는", "예산"], 7, "interim 낭독", true],
+    [["둘째는", "일정"], 9, "interim 낭독", true],
+    [["첫째는", "예산"], 9, "interim 이 이전 문구로 번복 → 위치 유지", true],
+    [["둘째는", "일정"], 9, "interim 이 제자리로 복귀", true],
+    [["첫째는", "예산"], 7, "final 재독(강한 매칭) → 진짜 되돌아감"],
+    [["둘째는", "일정"], 9, "다시 앞으로 이어서", true],
+    [["셋째는", "채용입니다"], 11, "끝까지", true],
   ],
 );
 

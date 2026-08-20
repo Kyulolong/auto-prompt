@@ -19,6 +19,7 @@ export class WebSpeechEngine implements SttEngine {
   private hooks: SttHooks;
   private wantRunning = false;
   private restartTimer = 0;
+  private emittedFinals = 0; // finals already forwarded this session (Safari re-sends them)
 
   constructor(hooks: SttHooks) {
     this.hooks = hooks;
@@ -44,15 +45,28 @@ export class WebSpeechEngine implements SttEngine {
     rec.maxAlternatives = 1;
 
     rec.onstart = () => this.hooks.onStatus("listening");
+    this.emittedFinals = 0; // fresh recognition session -> fresh results list
 
     rec.onresult = (e: SpeechRecognitionEvent) => {
       // Emit the tail: the latest final (if any this event) plus the live interim.
+      //
+      // Don't trust e.resultIndex: Safari (iPad/iPhone) keeps it at 0 and
+      // restates every result since the session began, so already-finalized
+      // phrases would be re-emitted and drag the aligner back to text the
+      // reader passed long ago. Result indexes are stable within a session,
+      // so counting the finals we've forwarded dedupes on every browser.
       let interim = "";
       let finalText = "";
-      for (let i = e.resultIndex; i < e.results.length; i++) {
+      for (let i = 0; i < e.results.length; i++) {
         const r = e.results[i];
-        if (r.isFinal) finalText += r[0].transcript;
-        else interim += r[0].transcript;
+        if (r.isFinal) {
+          if (i >= this.emittedFinals) {
+            finalText += r[0].transcript;
+            this.emittedFinals = i + 1;
+          }
+        } else {
+          interim += r[0].transcript;
+        }
       }
       if (finalText) this.hooks.onResult({ words: splitWords(finalText), isFinal: true });
       if (interim) this.hooks.onResult({ words: splitWords(interim), isFinal: false });

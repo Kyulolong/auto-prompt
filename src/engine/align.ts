@@ -148,7 +148,12 @@ export class Aligner {
     return q;
   }
 
-  push(spokenTokens: string[], now: number): AlignResult {
+  /**
+   * @param settled true when the words come from a FINAL result. Interim
+   * hypotheses get revised constantly (Safari especially rewrites whole
+   * phrases), so only settled speech is allowed to move the cursor backward.
+   */
+  push(spokenTokens: string[], now: number, settled = true): AlignResult {
     const query = this.buildQuery(spokenTokens);
     if (query.length < this.cfg.minQueryJamo) {
       return { token: this.confirmedToken, moved: false, lost: this.lostCount >= this.cfg.lostThreshold, confidence: 0 };
@@ -170,8 +175,9 @@ export class Aligner {
       const absEnd = start + consumed; // exclusive
       const token = jamoToToken[Math.min(absEnd - 1, jamoToToken.length - 1)];
       // Never snap backward on a merely-okay match (interim churn, repeated
-      // phrases). Only a STRONG match may move the cursor back — a real re-read.
-      if (token < this.confirmedToken && norm > this.cfg.reseekAccept) {
+      // phrases). Only a STRONG match from SETTLED speech may move the cursor
+      // back — a real re-read. Interim hypotheses hold position instead.
+      if (token < this.confirmedToken && (!settled || norm > this.cfg.reseekAccept)) {
         this.lostCount = 0;
         return { token: this.confirmedToken, moved: false, lost: false, confidence: 1 - norm };
       }
