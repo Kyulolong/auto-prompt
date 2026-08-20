@@ -8,7 +8,10 @@
  *     both single-word steps and big skips glide.
  *
  * Creep freezes when the speaker pauses or the aligner is lost, so silence holds
- * position instead of drifting ahead.
+ * position instead of drifting ahead. The target is also a forward ratchet:
+ * accrued creep never unwinds when speech stops (that read as a queasy
+ * back-then-forward bounce at every paragraph break) — the view only moves
+ * backward for a real backward event (re-read confirmation, manual seek).
  */
 export interface ScrollOptions {
   readingLineFrac: number; // where the current line sits (0=top, 1=bottom)
@@ -43,6 +46,7 @@ export class ScrollController {
   private autoPxPerSec = 45;
   private paused = false;
   private lastFrame = 0;
+  private ratchetToken = 0; // highest token-space target shown so far (voice mode)
 
   constructor(el: HTMLElement, opts: Partial<ScrollOptions> = {}) {
     this.el = el;
@@ -73,6 +77,9 @@ export class ScrollController {
 
   update(s: Partial<State> & { now: number }): void {
     if (s.confirmedToken !== undefined && s.confirmedToken !== this.state.confirmedToken) {
+      // A backward confirmation is a real re-read — release the ratchet so the
+      // view may glide back to it.
+      if (s.confirmedToken < this.state.confirmedToken) this.ratchetToken = 0;
       this.state.confirmedToken = s.confirmedToken;
       this.state.confirmedAt = s.now;
     }
@@ -99,6 +106,7 @@ export class ScrollController {
 
   /** Immediately center a token (used on manual seek / start). */
   jumpTo(token: number): void {
+    this.ratchetToken = token; // a seek re-bases the ratchet, backward included
     const y = this.yAt(token);
     this.el.scrollTop = y - this.el.clientHeight * this.opts.readingLineFrac;
   }
@@ -132,7 +140,10 @@ export class ScrollController {
     if (s.speaking && !s.lost && s.confirmedAt > 0) {
       creep = Math.min((s.tokensPerSec * (now - s.confirmedAt)) / 1000, creepCapTokens);
     }
-    const desired = s.confirmedToken + creep;
+    // Forward ratchet: when speech stops, creep collapsing to 0 must not pull
+    // the view back — hold the furthest target instead of unwinding it.
+    const desired = Math.max(s.confirmedToken + creep, this.ratchetToken);
+    this.ratchetToken = desired;
     const targetTop = this.yAt(desired) - this.el.clientHeight * readingLineFrac;
     const diff = targetTop - this.el.scrollTop;
     if (Math.abs(diff) > deadbandPx) {
