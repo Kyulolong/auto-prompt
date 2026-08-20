@@ -697,10 +697,6 @@ body {
 .engine-note b {
   color: var(--ink-soft);
 }
-.engine-note .warn {
-  color: var(--caution);
-  font-weight: 600;
-}
 .engine-note .easy {
   color: var(--ink-soft);
   font-style: italic;
